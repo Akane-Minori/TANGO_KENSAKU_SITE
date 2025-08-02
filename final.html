@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>最終課題</title>
+
+		<link rel="stylesheet" href="final.css" type="text/css">
+		<script src="https://cdn.jsdelivr.net/npm/vue@2.7.14/dist/vue.js"></script>
+	</head>
+    
+    
+    <!-- ここから本文 -->
+	<body>
+        
+            
+        
+        <div id="webcd">
+            
+            <!-- ページヘッダー -->
+            <div id="siteheader">
+                <div class="siteheader-content">
+                    <div class="siteheader-left">
+                        <a class="siteheader-items" href="https://www.nicovideo.jp/watch/sm36703614">
+                            <span class="siteheader-items-char">オススメ1</span>
+                        </a>
+                        <a class="siteheader-items" href="https://www.nicovideo.jp/watch/sm32118887">
+                            <span class="siteheader-items-char">オススメ2</span>
+                        </a>
+                        <a class="siteheader-items" href="https://www.pixiv.net/artworks/87313342">
+                            <span class="siteheader-items-char">オススメ3</span>
+                        </a>
+                        <a class="siteheader-items" href="https://www.nicovideo.jp/watch/so36581112">
+                            <span class="siteheader-items-char">デレマス</span>
+                        </a>
+                        <a class="siteheader-items" href="https://www.nicovideo.jp/watch/so42047414">
+                            <span class="siteheader-items-char">U149</span>
+                        </a>
+                    </div>
+                    <div class="siteheader-right">
+                        <a class="siteheader-items greenchar" href="https://www.nicovideo.jp/">
+                            <span class="siteheader-items-char">ニコニコ</span>
+                        </a>
+                        <a class="siteheader-items yellowchar" href="http://www17408ui.sakura.ne.jp/tatsum/database.html">
+                            <span class="siteheader-items-char">参考資料</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- ページ主部 -->
+            <div id="main">
+                
+                
+                
+                <!-- ページ主部の上側 -->
+                <div class="main-header">
+                    
+
+                    <div class="title">
+                        <h1>【html】単語検索ページを作りました</h1>
+                    </div>
+
+                    <div class="description">
+                        単語を検索したり合成したりランダム抽出したりするサイトです<br><br>
+                        【検索モード】: 検索できます<br>
+                        【合成モード】: 検索バーにいれた言葉と単語を合体させます<br>
+                        【ランダム】: 押すとランダムに100語抽出します<br>
+                        【？】: カーソルを合わせると読みが分かります
+                        <h4>このページは<a href="http://www17408ui.sakura.ne.jp/tatsum/database.html">松下言語学習ラボ</a>の重要度順語彙データベース (Top 60894) 重要度順位 00001-60894を利用しています</h4>
+                    </div>
+                    
+                    <div class="page-information">
+                        <div class="information-maker">
+                            <div class="information-maker-flex">
+                                <img width="52" height="52" src="img/nagi1.jpg">
+                                <div class="information-maker-char">赤寧みのり</div>
+                            </div>
+                        </div>
+                        <div class="information-pagedata">
+                            <div class="information-pagedata-table">
+                                
+                                <div class="information-pagedata-tablecells">
+                                    <p class="information-pagedata-char1">投稿日時</p>
+                                    <div class="information-pagedata-char2">2025/07/27 19:34</div>
+                                </div>
+
+                                <div class="information-pagedata-tablecells">
+                                    <p class="information-pagedata-char1">再生数</p>
+                                    <div class="information-pagedata-char2">0</div>
+                                </div>
+
+                                <div class="information-pagedata-tablecells">
+                                    <p class="information-pagedata-char1">総単語数</p>
+                                    <div class="information-pagedata-char2">{{ wordsdataLength }}</div>
+
+                                </div>
+
+                                <div class="information-pagedata-tablecells">
+                                    <p class="information-pagedata-char1">一致単語数</p>
+                                    <div class="information-pagedata-char2">{{ filteredwordLength }}</div>
+
+                                </div>
+
+                                <div class="information-pagedata-tablecells">
+                                    <p class="information-pagedata-char1">ジャンル</p>
+                                    <div class="information-pagedata-char2">生活</div>
+
+                                </div>
+
+                                <div class="information-pagedata-tablecells">
+                                    <p class="information-pagedata-char1">過去最高順位</p>
+                                    <div class="information-pagedata-char2">1位</div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    
+                    
+                    
+                    <!-- 単語表示部分 -->
+                    
+                    
+                    <div class="wordsearch">
+                        <input class="wordsearch-input" placeholder='単語を検索' v-model='filter' value=''>
+                        <div class="wordsearch-button">
+                            <div　class="wordsearch-button-mode">
+                                <button class="wordsearch-button-appearance" v-on:click="changeSearchmode" v-if="wordsearchmode == 'search'">検索モード</button>
+                                <button class="wordsearch-button-appearance" v-on:click="changeSearchmode" v-if="wordsearchmode == 'synth'">合成モード</button>
+                            </div>
+
+                            <div class="wordsearch-button-type">
+                                <button class="wordsearch-button-appearance" v-on:click="changeSearchtype" v-if="wordsearchtype == 'forward' && wordsearchmode == 'search'">前方一致</button>
+                                <button class="wordsearch-button-appearance" v-on:click="changeSearchtype" v-if="wordsearchtype == 'back' && wordsearchmode == 'search'">後方一致</button>
+                                <button class="wordsearch-button-appearance" v-on:click="changeSearchtype" v-if="wordsearchtype == 'part' && wordsearchmode == 'search'">部分一致</button>
+                                <button class="wordsearch-button-appearance" v-on:click="doRedraw" v-if="wordsearchmode == 'synth'">再抽選</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                    
+                    
+                    <div class="wordspart">
+                        
+                        <div class="wordspart-randombutton">
+                            <button class="wordspart-randombutton-circle" v-on:click="buttonClicked">
+                                ランダム
+                            </button>
+                        </div>
+                        
+                        <div class="wordspart-words">
+                            <ul class="wordspart-words-list">
+                                <li class="items" v-for='(word, wordindex) in filteredword'>
+                                    <a class="items-name">
+                                        {{ word.name }}
+                                    </a>
+                                    <a class="items-info">
+                                        <span class="items-button" v-on:mouseover="mouseover(wordindex)" v-on:mouseleave="mouseleave(wordindex)">
+                                            <svg class="items-buttonword" viewBox="0 0 100 100" stroke-miterlimit="1.4">
+                                                <path d="M 62 80 a 4 4 0 0 1 4 4 v 12 a 4 4 0 0 1 -4 4 H 38 a 4 4 0 0 1 -4 -4 V 84 a 4 4 0 0 1 4 -4 h 24 z M 0 16 A 16 16 0 0 1 16 0 h 68 a 16 16 0 0 1 16 16 v 26 a 16 16 0 0 1 -16 16 H 64 a 4 4 0 0 0 -4 4 v 6 a 4 4 0 0 1 -4 4 H 44 a 4 4 0 0 1 -4 -4 V 50 a 8 8 0 0 1 8 -8 h 24 a 8 8 0 0 0 8 -8 V 24 a 8 8 0 0 0 -8 -8 H 28 a 8 8 0 0 0 -8 8 v 12 a 4 4 0 0 1 -4 4 H 4 a 4 4 0 0 1 -4 -4 V 16 z" />
+                                            </svg>
+                                        </span>
+                                    </a>
+                                    
+                                    <br>
+                                    <div class="items-read" v-show="hoverFlag[wordindex]">
+                                        <a class="items-read-char">{{ word.read }}</a>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+
+                    </div>
+                    
+                </div>
+                
+                
+                
+                
+                <!-- ここからおまけ -->
+                
+                
+                <!-- ページ主部の中央 -->
+                
+                
+                
+                <!-- ページ主部の下側 -->
+                
+            </div>
+        
+        </div>
+        
+        
+        
+        
+        
+        
+        
+		<script>
+            
+            // ここからvue.js
+			var vue = new Vue
+            ({
+				el: '#webcd',
+                
+				// data内に書いてある配列等をページ内で使える
+                
+                data:
+                {
+					wordsdata: {},
+                    
+                    filter: "",
+                    
+                    hoverFlag: {},
+                    
+                    wordsearchmode: 'search',
+                    wordsearchtype: 'forward',
+                    randombutton: false,
+                    redraw: 0
+
+				}, 
+            
+                computed:
+                {
+                    
+					// フィルターした単語
+					filteredword: function()
+                    {
+                        // これがないとランダムボタンを押したときにv-modelが効かなくなる
+                        // 理由は不明だが、おそらく条件分岐を複雑にしすぎて、filterの変化を検知できなくなっているものと思われる
+                        // いや普通にメインループ使わせてほしいんすけど　なにcomputedって
+                        this.filter;
+                        // 再抽選ボタンを監視する
+                        this.redraw;
+                        
+                        // ランダムボタン
+                        if(this.randombutton == true)
+                        {
+                            let array = new Array();
+                            let randomnumber;
+                            
+                            // 100個抽出しますよ
+                            while(array.length < 100)
+                            {
+                                randomnumber = Math.floor(Math.random() * this.wordsdataLength);
+                                if(!array.includes(this.wordsdata[randomnumber]))
+                                    array.push(this.wordsdata[randomnumber]);
+                            }
+                            this.randombutton = false;
+
+                            return array;
+                            console.log("return以降も読まれるかテスト"); //読まれなかった
+                        }
+                        
+                        // 空欄のとき
+                        else if(this.filter == '')
+                        {
+                            let array = new Array();
+                            let randomnumber;
+                            
+                            // ifがないと固まる
+                            // たぶんwordsdataをまだ読み込んでない状態でwhileループを回そうとするため
+                            if(this.wordsdataLength > 100)
+                            {
+                                // 100個抽出しますよ
+                                while(array.length < 100)
+                                {
+                                    randomnumber = Math.floor(Math.random() * this.wordsdataLength);
+                                    if(!array.includes(this.wordsdata[randomnumber]))
+                                        array.push(this.wordsdata[randomnumber]);
+                                }
+                            }
+                            return array;
+                        }
+                        
+                        // 検索モード
+                        else if(this.wordsearchmode == 'search')
+                        {
+                            return this.wordsdata.filter(word=>
+                            {
+                                
+                                // 前方一致
+                                if(this.wordsearchtype == 'forward')
+                                {
+                                    if(word.name.indexOf(this.filter) != 0 && word.read.indexOf(this.filter) != 0) return false;
+                                    return true;
+                                }
+                                
+                                // 後方一致
+                                if(this.wordsearchtype == 'back')
+                                {
+                                    if(!word.name.endsWith(this.filter) && !word.read.endsWith(this.filter)) return false;
+                                    return true;
+                                }
+                                
+                                // 部分一致
+                                if(this.wordsearchtype == 'part')
+                                {
+                                    if(!word.name.includes(this.filter) && !word.read.includes(this.filter)) return false;
+                                    return true;
+                                }
+                                
+                            });
+                        }
+                        
+                        // 合成モード
+                        else if(this.wordsearchmode == 'synth')
+                        {
+                            let array = new Array();
+                            let randomnumber;
+                            let forwardOrback;
+                            let synthname;
+                            let synthread;
+                            let count = 0;
+
+                            while(array.length < 100)
+                            {
+                                randomnumber = Math.floor(Math.random() * this.wordsdataLength);
+                                forwardOrback = Math.floor(Math.random() * 2);
+
+                                if(!this.wordsdata[randomnumber].name.includes('～'))
+                                {
+
+                                    // 後にくっつける
+                                    if(forwardOrback == 0)
+                                    {
+                                        synthname = this.wordsdata[randomnumber].name + this.filter;
+                                        synthread = this.wordsdata[randomnumber].read + this.filter;
+                                    }
+                                    // 前にくっつける
+                                    if(forwardOrback == 1)
+                                    {
+                                        synthname = this.filter + this.wordsdata[randomnumber].name;
+                                        synthread = this.filter + this.wordsdata[randomnumber].read;
+                                    }
+
+                                    // オブジェクトを渡すと参照渡しになるのでいちいちオブジェクト生成してキーごとに代入
+                                    // いや普通に値渡しか参照渡しか選ばせてよ　C++を見習え
+                                    array[count] = new Object;
+                                    this.$set(array[count], "name", synthname);
+                                    this.$set(array[count], "read", synthread);
+                                    count++;
+                                }
+                            }
+                            return array;
+                        }
+                        
+					},
+                    
+                    
+                    // 総単語数
+                    wordsdataLength: function()
+                    { return this.wordsdata.length; },
+                    
+                    // 一致単語数
+                    filteredwordLength: function()
+                    { return this.filteredword.length; }
+				}, 
+                
+                
+				// ページが開いたら実行
+                created: function()
+                { this.getData(); }, 
+            
+                
+                // 関数を宣言
+                methods: 
+                {
+                    // マウスオーバー、マウスリーブ
+                    mouseover: function (wordindex)
+                    { this.$set(this.hoverFlag, wordindex, true); },
+                    mouseleave: function (wordindex)
+                    { this.$set(this.hoverFlag, wordindex, false); },
+                    
+                    // 検索モードの検索方法
+                    changeSearchtype: function ()
+                    {
+                        if(this.wordsearchtype == 'forward') this.wordsearchtype = 'back';
+                        else if(this.wordsearchtype == 'back') this.wordsearchtype = 'part';
+                        else if(this.wordsearchtype == 'part') this.wordsearchtype = 'forward';
+                    },
+                    // モード切替
+                    changeSearchmode: function ()
+                    {
+                        if(this.wordsearchmode == 'search') this.wordsearchmode = 'synth';
+                        else if(this.wordsearchmode == 'synth') this.wordsearchmode = 'search';
+                    },
+                    
+					// 単語データ取得処理
+					getData: function()
+                    {
+						fetch('VDRJ_Ver1_1_Research_Top60894.json')
+						.then(response => response.json())
+						.then((data) => { this.wordsdata = data; } )
+						.catch((error) => console.warn(error));
+					},
+                    
+                    // ランダムボタンクリック時の動作
+                    buttonClicked: function()
+                    { this.randombutton = true; },
+                    // 合成モードの再抽選
+                    doRedraw: function()
+                    { this.redraw++; }
+                    
+                }
+                
+            
+			});
+		</script>
+	</body>
+</html>
